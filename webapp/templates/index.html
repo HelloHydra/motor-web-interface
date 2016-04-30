@@ -13,69 +13,62 @@ span {font-weight: bold;}
 
 <script type=text/javascript>
     $(
-    // When the LED button is pressed (change)
-    // do an ajax request to server to change LED state
     function() 
     {
         $('#flip-1').change(function() 
         {
-        $.getJSON('/_led', {state: $('#flip-1').val()});
-        });     
+        $.getJSON('/_switch', {state: $('#flip-1').val()});
+        });
+
+        $('#setPosition').click(function() 
+        {
+        $.getJSON('/_setPosition', {value: $('#targetPositionInput').val()});
+        });
     }
     );
 
     $(
-    // periodically (500ms) do an ajax request to get the button state
-    // modify the span tag to reflect the state (pressed or not)
-    // the state text comes from the JSON string returned by the server
-    function button() 
-    {
-        $.getJSON('/_button', function(data)
-            {
-                $("#buttonState").text(data.buttonState);
-                setTimeout(function(){button();},500);
-            });
-    }
-    );
-
-    $(
-    // periodically (500ms) do an ajax request to get the button state
-    // modify the span tag to reflect the state (pressed or not)
-    // the state text comes from the JSON string returned by the server
     function stats() 
     {
         $.getJSON('/_stats', function(data)
-            {
-                $("#uptime").text(data.stats);
-                setTimeout(function(){stats();},500);
-            });
+        {
+            $("#motorState").text(data.motorState);
+            $("#currentPosition").text(data.currentPosition);
+            $("#targetPosition").text(data.targetPosition);
+            $("#uptime").text(data.uptime);
+            setTimeout(function(){stats();},500);
+        });
     }
     );
-    
-
 </script>
-<!-- Simple JQuery Mobile page that display the button state on the breadoard -->
-<!-- You can also change the LED state with the slider switch -->
-<!-- The Raspberry Pi uptime is displayed in the footer (Jinja2 expands the template tag) -->
 
 <div data-role="page" data-theme="b">
-  <div data-role="header">
-    <div><h3>PnP Bot Web Control</h3></div>
-  </div>
+    <div data-role="header">
+        <div><h3>PnP Bot Web Control</h3></div>
+    </div>
 
-  <div data-role="content">
-    <form>
-    <p>The button is <span id="buttonState"></span></p>
-    <br>
-    <select name="flip-1" id="flip-1" data-role="slider" style="float: left;">
-        <option value="off">LED off</option>
-        <option value="on">LED on</option>
-    </select>
-    </form>
-  </div>
+    <div data-role="content">
+        <form>
+        <p>Motor is <span id="motorState"></span></p>
+        <br>
+        <select name="flip-1" id="flip-1" data-role="slider" style="float: left;">
+            <option value="off">LED off</option>
+            <option value="on">LED on</option>
+        </select>
+        </form>
+    </div>
+
+    <div data-role="content">
+        <p>Current position <span id="currentPosition"></span></p>
+        <p>Target position <span id="targetPosition"></span></p>
+        <form>
+            <input id="targetPositionInput">
+            <button id="setPosition" type="button">Apply</button>
+        </select>
+        </form>
+    </div>
  <div data-role="footer">
-    <div><h4>Uptime {{uptime}}</h4></div>
-    <div><h4>Curent time <span id="uptime"></span></h4></div>
-    
-  </div>
+        <div><h4>Curent time <span id="uptime"></span></h4></div>
+        
+    </div>
 </div>

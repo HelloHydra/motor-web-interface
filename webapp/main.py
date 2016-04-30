@@ -7,11 +7,14 @@ app = Flask(__name__)
 
 input_lines = list()
 
+target_position = 0;
+current_position = 0;
+
 @app.route('/')
 def index():
-    return render_template('index.html', uptime="5 days" )
+    return render_template('index.html')
 
-@app.route("/_led")
+@app.route("/_switch")
 def _led():
     state = request.args.get('state')
     if state == 'on':
@@ -20,28 +23,21 @@ def _led():
         print("Led OFF")
     return ''
 
-@app.route("/_button")
-def _button():
-    state = "not pressed"
-    return jsonify(buttonState=state)
-
 @app.route("/_stats")
 def _stats():
-    uptime = str(datetime.datetime.time(datetime.datetime.now()))
-    return jsonify(stats=uptime)
+    return jsonify(
+        motorState="Running",
+        currentPosition=str(current_position),
+        targetPosition=str(target_position),
+        uptime=str(datetime.datetime.now())
+        )
 
-
-@app.route('/display', methods=['POST'])
-def display():
-    input_lines.append(request.form['line'])
-    print("received")
-    return redirect(url_for('index'))
-
-@app.route('/quit')
-def quit():
-    func = request.environ.get('werkzeug.server.shutdown')
-    func()
-    return "Quitting..."
+@app.route('/_setPosition')
+def apply_position():
+    global target_position
+    target_position = int(request.args.get('value'))
+    print("New target position", target_position)
+    return ''
 
 if __name__ == '__main__':
     app.run()
