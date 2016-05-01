@@ -26,7 +26,14 @@ span {font-weight: bold;}
         });
 
         $('form#setTargetPosition').submit(function(event) {
+            $('#targetPositionSlider').val($('#targetPositionValue').val());
+            $('#targetPositionSlider').slider('refresh');
             socket.emit('set target position', {targetPositionValue: $('#targetPositionValue').val()});
+            return false;
+        });
+
+        $('form#setTargetPositionSlider').change(function(event) {
+            socket.emit('set target position', {targetPositionValue: $('#targetPositionSlider').val()});
             return false;
         });
 
@@ -41,10 +48,14 @@ span {font-weight: bold;}
     <div data-role="content">
         <p>Current position <span id="currentPosition"></span></p>
         <p>Target position <span id="targetPosition"></span></p>
-        <form id="setTargetPosition" method="POST" action='#'>
+        
+        <form id="setTargetPositionSlider" method="POST" action="#">
+            <input type="range" id="targetPositionSlider" value="0" min="0" max="1000" step="1">
+        </form>
+
+        <form id="setTargetPosition" method="POST" action="#">
             <input type="text" id="targetPositionValue">
             <button type="submit">Apply</button>
-        </select>
         </form>
     </div>
 
