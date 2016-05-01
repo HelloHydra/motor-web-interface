@@ -11,35 +11,26 @@ h3, h4 {text-align: center;}
 span {font-weight: bold;}
 </style>
 
-<script type=text/javascript>
-    $(
-    function() 
-    {
-        $('#flip-1').change(function() 
-        {
-        $.getJSON('/_switch', {state: $('#flip-1').val()});
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function(){
+        namespace = '/test';
+
+        var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+
+        socket.on('update parameters', function(msg) {
+            $('#currentPosition').text(msg.currentPosition);
+            $('#targetPosition').text(msg.targetPosition);
+            $("#uptime").text(msg.uptime);
+            
         });
 
-        $('#setPosition').click(function() 
-        {
-        $.getJSON('/_setPosition', {value: $('#targetPositionInput').val()});
+        $('form#setTargetPosition').submit(function(event) {
+            socket.emit('set target position', {targetPositionValue: $('#targetPositionValue').val()});
+            return false;
         });
-    }
-    );
 
-    $(
-    function stats() 
-    {
-        $.getJSON('/_stats', function(data)
-        {
-            $("#motorState").text(data.motorState);
-            $("#currentPosition").text(data.currentPosition);
-            $("#targetPosition").text(data.targetPosition);
-            $("#uptime").text(data.uptime);
-            setTimeout(function(){stats();},100);
-        });
-    }
-    );
+    });
 </script>
 
 <div data-role="page" data-theme="b">
@@ -48,25 +39,15 @@ span {font-weight: bold;}
     </div>
 
     <div data-role="content">
-        <form>
-        <p>Motor is <span id="motorState"></span></p>
-        <br>
-        <select name="flip-1" id="flip-1" data-role="slider" style="float: left;">
-            <option value="off">LED off</option>
-            <option value="on">LED on</option>
+        <p>Current position <span id="currentPosition"></span></p>
+        <p>Target position <span id="targetPosition"></span></p>
+        <form id="setTargetPosition" method="POST" action='#'>
+            <input type="text" id="targetPositionValue">
+            <button type="submit">Apply</button>
         </select>
         </form>
     </div>
 
-    <div data-role="content">
-        <p>Current position <span id="currentPosition"></span></p>
-        <p>Target position <span id="targetPosition"></span></p>
-        <form>
-            <input id="targetPositionInput">
-            <button id="setPosition" type="button">Apply</button>
-        </select>
-        </form>
-    </div>
  <div data-role="footer">
         <div><h4>Curent time <span id="uptime"></span></h4></div>
         
