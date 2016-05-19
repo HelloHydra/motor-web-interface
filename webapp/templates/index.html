@@ -22,6 +22,8 @@ span {font-weight: bold;}
             $('#currentPosition').text(msg.currentPosition);
             $('#targetPosition').text(msg.targetPosition);
             $("#uptime").text(msg.uptime);
+            $("#currentPositionSlider").val(msg.currentPosition);
+            $('#currentPositionSlider').slider('refresh');
             
         });
 
@@ -50,7 +52,11 @@ span {font-weight: bold;}
         <p>Target position <span id="targetPosition"></span></p>
         
         <form id="setTargetPositionSlider" method="POST" action="#">
-            <input type="range" id="targetPositionSlider" value="0" min="0" max="1000" step="1">
+            <input type="range" id="targetPositionSlider" value="0" min="0" max="1000000" step="1">
+        </form>
+
+        <form id="showCurrentPositionSlider" method="POST" action="#">
+            <input type="range" id="currentPositionSlider" value="0" min="0" max="1000000" step="1">
         </form>
 
         <form id="setTargetPosition" method="POST" action="#">
